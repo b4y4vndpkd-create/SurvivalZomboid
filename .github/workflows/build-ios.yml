@@ -11,7 +11,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Setup Godot and Templates
+      - name: Setup Godot and Export Templates
         run: |
           GODOT_VERSION=4.3-stable
           
@@ -21,12 +21,17 @@ jobs:
           sudo mv Godot.app /Applications/Godot.app
           sudo ln -s /Applications/Godot.app/Contents/MacOS/Godot /usr/local/bin/godot
 
-          # Download and install Export Templates
+          # Download Export Templates .tpz file
           curl -L -o templates.tpz "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_export_templates.tpz"
+          
+          # Let Godot install the templates automatically into the correct path
+          mkdir -p ~/.local/share/godot/export_templates/${GODOT_VERSION}
+          godot --headless --install-export-templates templates.tpz || true
+          
+          # Fallback manual placement just in case
           mkdir -p ~/Library/Application\ Support/Godot/export_templates/${GODOT_VERSION}
-          unzip templates.tpz -d temp_templates
-          # Godot export templates tpz extracts into a 'templates' folder containing individual files like ios.zip
-          mv temp_templates/templates/* ~/Library/Application\ Support/Godot/export_templates/${GODOT_VERSION}/
+          unzip -o templates.tpz -d template_extracted
+          find template_extracted -name "ios.zip" -exec cp {} ~/Library/Application\ Support/Godot/export_templates/${GODOT_VERSION}/ \;
 
       - name: Export iOS Project
         run: |
