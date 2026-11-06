@@ -25,6 +25,7 @@ jobs:
           curl -L -o templates.tpz "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_export_templates.tpz"
           mkdir -p ~/Library/Application\ Support/Godot/export_templates/${GODOT_VERSION}
           unzip templates.tpz -d temp_templates
+          # Godot export templates tpz extracts into a 'templates' folder containing individual files like ios.zip
           mv temp_templates/templates/* ~/Library/Application\ Support/Godot/export_templates/${GODOT_VERSION}/
 
       - name: Export iOS Project
