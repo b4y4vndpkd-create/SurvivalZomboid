@@ -11,13 +11,16 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Install Godot
+      - name: Download Godot Export Templates
         run: |
-          brew install --cask godot
-          godot --version
+          GODOT_VERSION=4.3-stable
+          curl -L -o godot.zip "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_macos.universal.zip"
+          unzip godot.zip
+          sudo mv Godot.app /Applications/Godot.app
+          sudo ln -s /Applications/Godot.app/Contents/MacOS/Godot /usr/local/bin/godot
 
       - name: Export iOS Project
         run: |
           cd survival_zomboid
           mkdir -p build/ios
-          godot --headless --export-release "iOS" build/ios/game.xcodeproj
+          godot --headless --path . --export-release "iOS" build/ios/game.xcodeproj
