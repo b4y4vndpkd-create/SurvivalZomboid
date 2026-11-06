@@ -11,13 +11,21 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Download Godot Export Templates
+      - name: Setup Godot and Templates
         run: |
           GODOT_VERSION=4.3-stable
+          
+          # Download and install Godot Editor
           curl -L -o godot.zip "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_macos.universal.zip"
           unzip godot.zip
           sudo mv Godot.app /Applications/Godot.app
           sudo ln -s /Applications/Godot.app/Contents/MacOS/Godot /usr/local/bin/godot
+
+          # Download and install Export Templates
+          curl -L -o templates.tpz "https://github.com/godotengine/godot/releases/download/${GODOT_VERSION}/Godot_v${GODOT_VERSION}_export_templates.tpz"
+          mkdir -p ~/Library/Application\ Support/Godot/export_templates/${GODOT_VERSION}
+          unzip templates.tpz -d temp_templates
+          mv temp_templates/templates/* ~/Library/Application\ Support/Godot/export_templates/${GODOT_VERSION}/
 
       - name: Export iOS Project
         run: |
